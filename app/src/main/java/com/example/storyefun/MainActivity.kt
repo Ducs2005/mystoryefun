@@ -23,10 +23,16 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun AppNavHost(navController: NavHostController) {
-    NavHost(navController, startDestination = "register") {
+    NavHost(navController, startDestination = "read") {
         composable("login") { LoginScreen(navController) }
         composable("home") { HomeScreen(navController) }
         composable("register") { RegisterScreen(navController) }
 
+
+        composable("bookDetail") { BookDetailScreen() }
+        composable("read") { ReaderScreen() }
+
+
     }
 }
+
