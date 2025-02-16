@@ -1,37 +1,46 @@
 package com.example.storyefun.ui.screens
 
-
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun HomeScreen(navController: NavController) {
-    val mangaList = listOf("One Piece", "Naruto", "Attack on Titan") // Sample Data
+    val auth = FirebaseAuth.getInstance()
+    val user = auth.currentUser
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text(text = "Manga List", style = MaterialTheme.typography.headlineLarge)
-        Spacer(modifier = Modifier.height(8.dp))
-        LazyColumn {
-            items(mangaList) { manga ->
-                Text(
-                    text = manga,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                        .clickable { /* Navigate to detail screen (later) */ }
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { navController.navigate("login") }) {
-            //Text("Upload Manga")
+    Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Welcome, ${user?.email ?: "Guest"}!",
+            style = MaterialTheme.typography.headlineLarge,
+            modifier = Modifier.padding(bottom = 20.dp)
+        )
+
+        Button(
+            onClick = {
+                auth.signOut()
+                navController.navigate("login")
+            },
+            modifier = Modifier.fillMaxWidth().height(50.dp)
+        ) {
+            Text(text = "Logout")
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeScreenPreview() {
+    HomeScreen(navController = NavController(LocalContext.current))
 }
