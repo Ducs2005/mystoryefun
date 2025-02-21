@@ -2,9 +2,11 @@
 
 package com.example.storyefun.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -15,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
@@ -31,6 +34,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -43,40 +47,116 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.example.storyefun.R
 import com.google.firebase.auth.FirebaseAuth
 
 @ExperimentalMaterial3Api
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen() {
+    var text by remember { mutableStateOf("") }
+    var active by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text("Storyefun",
-                        style = TextStyle(
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF6200EE),
-                            fontSize = 26.sp)
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+//                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Column(){
+                        Text(
+                            text = "Logo ở đây",
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 15.sp
                         )
-                        },
-                navigationIcon = {
-                    IconButton(onClick = {}) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu")
+                        Text(
+                            text = "Ten app o day",
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 10.sp,
+                            color = Color.Gray
+                        )
                     }
-                },
-                actions = {
-                    IconButton(onClick = {}) {
-                        Icon(Icons.Default.Search, contentDescription = "Search")
+//                    Spacer(modifier = Modifier.width(10.dp))
+                    Column(
+                        modifier = Modifier.padding(top = 25.dp),
+                    ){
+                        Text(
+                            text = "Hi, Thanh Phuong!",
+                            fontSize = 25.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            modifier = Modifier.padding(5.dp),
+                            text = "Welcome back to Storyefun",
+                            fontSize = 15.sp,
+                            color = Color.Gray,
+                        )
                     }
                     IconButton(onClick = {}) {
-                        Icon(Icons.Default.Person, contentDescription = "Profile")
+                        Icon(
+                            Icons.Default.Notifications,
+                            contentDescription = "Notification",
+                            tint = Color.DarkGray,
+                            modifier = Modifier.size(30.dp)
+                        )
                     }
                 }
-            )
+                // Navigation Drawer & Search
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = {}) {
+                        Icon(
+                            modifier = Modifier.size(32.dp),
+                            painter = painterResource(id=R.drawable.baseline_clear_all_24),
+                            contentDescription = null,
+                            tint = Color(0xFF899292)
+                        )
+                    }
+                    SearchBar(
+                        modifier = Modifier
+                            .padding(10.dp),
+                        query = text,
+                        onQueryChange = { text = it },
+                        onSearch = { active = false },
+                        active = active,
+                        onActiveChange = { active = it },
+                        placeholder = {
+                            Text(text = "Search here...")
+                        },
+                        leadingIcon = {
+                            Icon(imageVector = Icons.Default.Search, "Search icon")
+                        },
+                        shape = RoundedCornerShape(4.dp),
+                        trailingIcon = {
+                            if (active) {
+                                Icon(
+                                    modifier = Modifier.clickable {
+                                        if (text.isNotEmpty()) {
+                                            text = ""
+                                        } else {
+                                            active = false
+                                        }
+                                    },
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Close icon"
+                                )
+                            }
+                        }
+                    ) {}
+                }
+            }
         },
         bottomBar = {
             BottomAppBar() {
+
                 IconButton(onClick = {}) {
                     Icon(Icons.Default.Menu, contentDescription = "Home")
                 }
