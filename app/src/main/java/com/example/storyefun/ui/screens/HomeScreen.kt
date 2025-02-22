@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
@@ -36,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -57,162 +59,137 @@ import com.google.firebase.auth.FirebaseAuth
 fun HomeScreen() {
     var text by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
+
     Scaffold(
-        topBar = {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-//                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Column(){
-                        Text(
-                            text = "Logo ở đây",
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = 15.sp
-                        )
-                        Text(
-                            text = "Ten app o day",
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = 10.sp,
-                            color = Color.Gray
-                        )
-                    }
-//                    Spacer(modifier = Modifier.width(10.dp))
-                    Column(
-                        modifier = Modifier.padding(top = 25.dp),
-                    ){
-                        Text(
-                            text = "Hi, Thanh Phuong!",
-                            fontSize = 25.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            modifier = Modifier.padding(5.dp),
-                            text = "Welcome back to Storyefun",
-                            fontSize = 15.sp,
-                            color = Color.Gray,
-                        )
-                    }
-                    IconButton(onClick = {}) {
-                        Icon(
-                            Icons.Default.Notifications,
-                            contentDescription = "Notification",
-                            tint = Color.DarkGray,
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }
-                }
-                // Navigation Drawer & Search
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = {}) {
-                        Icon(
-                            modifier = Modifier.size(32.dp),
-                            painter = painterResource(id=R.drawable.baseline_clear_all_24),
-                            contentDescription = null,
-                            tint = Color(0xFF899292)
-                        )
-                    }
-                    SearchBar(
-                        modifier = Modifier
-                            .padding(10.dp),
-                        query = text,
-                        onQueryChange = { text = it },
-                        onSearch = { active = false },
-                        active = active,
-                        onActiveChange = { active = it },
-                        placeholder = {
-                            Text(text = "Search here...")
-                        },
-                        leadingIcon = {
-                            Icon(imageVector = Icons.Default.Search, "Search icon")
-                        },
-                        shape = RoundedCornerShape(4.dp),
-                        trailingIcon = {
-                            if (active) {
-                                Icon(
-                                    modifier = Modifier.clickable {
-                                        if (text.isNotEmpty()) {
-                                            text = ""
-                                        } else {
-                                            active = false
-                                        }
-                                    },
-                                    imageVector = Icons.Default.Close,
-                                    contentDescription = "Close icon"
-                                )
-                            }
-                        }
-                    ) {}
-                }
-            }
-        },
-        bottomBar = {
-            BottomAppBar() {
-
-                IconButton(onClick = {}) {
-                    Icon(Icons.Default.Menu, contentDescription = "Home")
-                }
-                IconButton(onClick = {}) {
-                    Icon(Icons.Default.FavoriteBorder, contentDescription = "Favorites")
-                }
-                IconButton(onClick = {}) {
-                    Icon(Icons.Default.Home, contentDescription = "Home")
-                }
-
-                Spacer(modifier = Modifier.weight(0.1f))
-
-                IconButton(onClick = {}) {
-                    Icon(
-                        Icons.Default.AddCircle,
-                        contentDescription = "Add",
-                        modifier = Modifier.size(100.dp)
-                    )
-                }
-
-                Spacer(modifier = Modifier.weight(0.1f))
-
-                IconButton(onClick = {}) {
-                    Icon(Icons.Default.Share, contentDescription = "Share")
-                }
-
-                IconButton(onClick = { }) {
-                    Icon(Icons.Default.Settings, contentDescription = "Settings")
-                }
-                IconButton(onClick = {}) {
-                    Icon(Icons.Default.Notifications, contentDescription = "Home")
-                }
-            }
-        }
+        topBar = { Header(text, active, onQueryChange = { text = it }, onActiveChange = { active = it }) },
+        bottomBar = { }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            item {
-                Banner()
-            }
-            item {
-                Navigation2()
-            }
-            item {
-                ContinueRead()
-            }
-            item {
-                Stories()
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Background image
+            Image(
+                painter = painterResource(R.drawable.background),
+                contentDescription = "background",
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier
+                    .matchParentSize()
+                    .graphicsLayer(alpha = 0.7f)
+            )
+
+            // Main content
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                item { Banner() }
+                item { ContinueRead() }
+                item { Stories() }
             }
         }
     }
 }
+
+@Composable
+fun Header(
+    text: String,
+    active: Boolean,
+    onQueryChange: (String) -> Unit,
+    onActiveChange: (Boolean) -> Unit
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        // Header 1
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            // Left
+            Column(modifier = Modifier.padding(8.dp)) {
+                Text(
+                    text = "ストリエフン",
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = "STORYEFUN",
+                    color = Color.DarkGray
+                )
+            }
+            // Right
+            Row(modifier = Modifier.padding(5.dp)) {
+                IconButton(onClick = {}) { Icon(Icons.Default.Person, contentDescription = "person") }
+                IconButton(onClick = {}) { Icon(Icons.Default.Notifications, contentDescription = "notifications") }
+                IconButton(onClick = {}) { Icon(Icons.Default.MoreVert, contentDescription = "morevert") }
+            }
+        }
+
+        Divider(modifier = Modifier.padding(horizontal = 20.dp))
+
+        // Header 2
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = {}) {
+                Icon(
+                    painter = painterResource(id = R.drawable.menu),
+                    contentDescription = null,
+                    tint = Color.Gray,
+                    modifier = Modifier.size(50.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(modifier = Modifier.padding(top = 15.dp)) {
+                Text(
+                    text = "Hi, Thanh Phuong!",
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    modifier = Modifier.padding(top = 4.dp),
+                    text = "Welcome back to Storyefun",
+                    fontSize = 15.sp,
+                    color = Color.Gray
+                )
+            }
+        }
+
+        // SearchBar
+        SearchBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            query = text,
+            onQueryChange = onQueryChange,
+            onSearch = { onActiveChange(false) },
+            active = active,
+            onActiveChange = onActiveChange,
+            placeholder = { Text(text = "Search here...") },
+            leadingIcon = { Icon(imageVector = Icons.Default.Search, contentDescription = "Search icon") },
+            shape = RoundedCornerShape(4.dp),
+            colors = SearchBarDefaults.colors(containerColor = Color.White),
+            trailingIcon = {
+                if (active) {
+                    Icon(
+                        modifier = Modifier.clickable {
+                            if (text.isNotEmpty()) {
+                                onQueryChange("")
+                            } else {
+                                onActiveChange(false)
+                            }
+                        },
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Close icon"
+                    )
+                }
+            }
+        ) {}
+    }
+}
+
 
 @Composable
 fun Banner() {
@@ -242,57 +219,6 @@ fun Banner() {
                 .height(250.dp)
                 .border(1.dp, Color.Gray, shape = RoundedCornerShape(10.dp))
         )
-    }
-}
-
-@Composable
-fun Navigation2(){
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column(){
-            IconButton(
-                onClick = {},
-                modifier = Modifier
-                    .width(80.dp)
-
-            ) {
-                Icon(painter = painterResource(id=R.drawable.book1) , contentDescription = null, tint = Color(0xFFFF520E))
-            }
-            Text(
-                text = "Truyện tranh",
-            )
-        }
-        Spacer(modifier = Modifier.weight(0.1f))
-        Column(){
-            IconButton(
-                onClick = {},
-                modifier = Modifier
-                    .width(80.dp)
-            ) {
-                Icon(painter = painterResource(id=R.drawable.book2), contentDescription = "null", tint = Color(0xEEE80B3F))
-            }
-            Text(
-                text = "Truyện chữ",
-            )
-        }
-        Spacer(modifier = Modifier.weight(0.1f))
-        Column(){
-            IconButton(
-                onClick = {},
-                modifier = Modifier
-                    .width(80.dp)
-            ) {
-                Icon(painter = painterResource(id=R.drawable.like), contentDescription = "null", tint = Color(0xFF199DCE))
-
-            }
-            Text(
-                text = "Sách yêu thích",
-            )
-        }
     }
 }
 
@@ -428,7 +354,7 @@ fun Stories() {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun PreviewHome(){
     HomeScreen()
