@@ -72,7 +72,7 @@ fun HomeScreen() {
                 contentScale = ContentScale.FillBounds,
                 modifier = Modifier
                     .matchParentSize()
-                    .graphicsLayer(alpha = 0.7f)
+                    .graphicsLayer(alpha = 0.5f)
             )
 
             // Main content
@@ -83,6 +83,10 @@ fun HomeScreen() {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 item { Banner() }
+                item { ContinueRead() }
+                item { ContinueRead() }
+                item { ContinueRead() }
+                item { ContinueRead() }
                 item { ContinueRead() }
                 item { Stories() }
             }

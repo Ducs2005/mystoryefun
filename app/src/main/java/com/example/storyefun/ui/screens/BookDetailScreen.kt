@@ -25,51 +25,74 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.example.storyefun.R
 import com.example.storyefun.ui.components.*
-
 
 @Composable
 fun BookDetailScreen() {
     var searchQuery by remember { mutableStateOf("") }
     var selectedTabIndex by remember { mutableStateOf(0) }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        SearchBar(searchQuery, onQueryChange = { searchQuery = it })
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        // Background Image
+        Image(
+            painter = painterResource(id = R.drawable.background3), // Replace with your background image
+            contentDescription = "Background",
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier
+                .fillMaxSize()
+                .matchParentSize()
 
-        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
 
-            MangaInfo()
-            Column(modifier = Modifier.fillMaxSize()) {
-                // Tabs
-                TabRow(
-                    selectedTabIndex = selectedTabIndex,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Tab(
-                        selected = selectedTabIndex == 0,
-                        onClick = { selectedTabIndex = 0 },
-                        text = { Text("Thông tin") }
-                    )
-                    Tab(
-                        selected = selectedTabIndex == 1,
-                        onClick = { selectedTabIndex = 1 },
-                        text = { Text("Chapter") }
-                    )
-                }
 
-                // Content based on selected tab
-                when (selectedTabIndex) {
-                    0 -> InformationSection()
-                    1 -> ChapterListSection()
+        )
+
+        // Foreground Content
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            SearchBar(searchQuery, onQueryChange = { searchQuery = it })
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                MangaInfo()
+                Column(modifier = Modifier.fillMaxSize()) {
+                    // Tabs
+                    TabRow(
+                        selectedTabIndex = selectedTabIndex,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Tab(
+                            selected = selectedTabIndex == 0,
+                            onClick = { selectedTabIndex = 0 },
+                            text = { Text("Thông tin") }
+                        )
+                        Tab(
+                            selected = selectedTabIndex == 1,
+                            onClick = { selectedTabIndex = 1 },
+                            text = { Text("Chapter") }
+                        )
+                    }
+
+                    // Content based on selected tab
+                    when (selectedTabIndex) {
+                        0 -> InformationSection()
+                        1 -> ChapterListSection()
+                    }
                 }
             }
-
-
         }
     }
-
 }
 
 
