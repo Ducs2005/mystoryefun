@@ -21,15 +21,16 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavHost(navController: NavHostController) {
     NavHost(navController, startDestination = "home") {
         composable("login") { LoginScreen(navController) }
+        composable("profile") { ProfileScreen(navController) }
         composable("home") { HomeScreen() }
+        composable("upload") { UploadScreen(navController) }
         composable("register") { RegisterScreen(navController) }
-
+        composable("mystory") { MyStoryScreen(navController) }
 
         composable("bookDetail") { BookDetailScreen() }
         composable("read") { ReaderScreen() }
