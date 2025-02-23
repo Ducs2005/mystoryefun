@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -60,9 +61,9 @@ fun Header(
             }
             // Right
             Row(modifier = Modifier.padding(5.dp)) {
-                IconButton(onClick = {}) { Icon(Icons.Default.Person, contentDescription = "person") }
-                IconButton(onClick = {}) { Icon(Icons.Default.Notifications, contentDescription = "notifications") }
-                IconButton(onClick = {}) { Icon(Icons.Default.MoreVert, contentDescription = "morevert") }
+                IconButton(onClick = { navController.navigate("profile")}) { Icon(Icons.Default.Person, contentDescription = "person") }
+                IconButton(onClick = {navController.navigate("setting")}) { Icon(Icons.Default.Settings, contentDescription = "settings") }
+                //IconButton(onClick = {}) { Icon(Icons.Default.MoreVert, contentDescription = "morevert") }
             }
         }
 

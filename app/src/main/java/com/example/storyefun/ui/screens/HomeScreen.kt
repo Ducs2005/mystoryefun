@@ -58,9 +58,6 @@ import com.google.firebase.auth.FirebaseAuth
 @ExperimentalMaterial3Api
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-
-
-
 fun HomeScreen(navController :NavController) {
     var text by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }

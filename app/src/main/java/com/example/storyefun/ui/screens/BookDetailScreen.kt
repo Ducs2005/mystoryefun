@@ -103,21 +103,29 @@ fun BookDetailScreen(navController: NavController) {
 @Composable
 fun MangaInfo() {
     Row {
-        Image(
-            painter = rememberImagePainter("https://s.fanfox.net/store/manga/15291/03-024.0/compressed/d020.jpg"),
-            contentDescription = "Manga Cover",
-            modifier = Modifier.size(100.dp)
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Column {
+        Box(modifier = Modifier.fillMaxWidth()
+            .padding(bottom = 15.dp)
+
+        ) {
             Image(
-                painter = rememberImagePainter("https://s.fanfox.net/store/manga/15291/03-024.0/compressed/d020.jpg"),
-                contentDescription = "Preview",
-                modifier = Modifier.size(100.dp)
+                painter = painterResource(id = R.drawable.bannerhome),
+                contentDescription = "Banner",
+                modifier = Modifier
+                    .fillMaxWidth()
+//                    .offset(y = 16.dp)
             )
 
+            Image(
+                painter = painterResource(id = R.drawable.poster1),
+                contentDescription = "Overlay Image",
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .fillMaxWidth(0.5f)
+                    .height(250.dp)
+            )
         }
     }
+
     Text(text = "Spirited Away", fontSize = 24.sp, color = Color.Black)
     Text(text = "Hayao Miyazaki", fontSize = 16.sp, color = Color.Gray)
 
