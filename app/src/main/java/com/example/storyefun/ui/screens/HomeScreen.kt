@@ -3,15 +3,30 @@
 package com.example.storyefun.ui.screens
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateIntOffsetAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
@@ -30,39 +45,64 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.rounded.AccountBox
+import androidx.compose.material.icons.rounded.AddCircle
+import androidx.compose.material.icons.rounded.Call
+import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.Share
+import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.storyefun.R
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.delay
 
 @ExperimentalMaterial3Api
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
     var text by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = { Header(text, active, onQueryChange = { text = it }, onActiveChange = { active = it }) },
-        bottomBar = { }
+        bottomBar = { BottomBar(navController) }
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize()) {
             // Background image
@@ -112,12 +152,14 @@ fun Header(
             Column(modifier = Modifier.padding(8.dp)) {
                 Text(
                     text = "ストリエフン",
-                    fontSize = 25.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
                     text = "STORYEFUN",
-                    color = Color.DarkGray
+                    fontSize = 13.sp,
+                    color = Color.DarkGray,
+                    modifier = Modifier.padding(start=8.dp)
                 )
             }
             // Right
@@ -149,13 +191,13 @@ fun Header(
             Column(modifier = Modifier.padding(top = 15.dp)) {
                 Text(
                     text = "Hi, Thanh Phuong!",
-                    fontSize = 25.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     modifier = Modifier.padding(top = 4.dp),
                     text = "Welcome back to Storyefun",
-                    fontSize = 15.sp,
+                    fontSize = 13.sp,
                     color = Color.Gray
                 )
             }
@@ -165,7 +207,7 @@ fun Header(
         SearchBar(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp),
+                .padding(8.dp),
             query = text,
             onQueryChange = onQueryChange,
             onSearch = { onActiveChange(false) },
@@ -193,6 +235,172 @@ fun Header(
         ) {}
     }
 }
+
+@Composable
+fun BottomBar(navController: NavController) {
+    val configuration = LocalConfiguration.current
+    val items = remember {
+        mutableStateListOf(
+            Item(
+                icon = Icons.Rounded.Home,
+                color = Color(0xFF433E3F),
+                route = "Home"
+            ),
+            Item(
+                icon = Icons.Rounded.AccountBox,
+                color = Color(0xFF433E3F),
+                route = "AccountBox"
+            ),
+            Item(
+                icon = Icons.Rounded.AddCircle,
+                color = Color(0xFF433E3F),
+                route = "AddCircle"
+            ),
+            Item(
+                icon = Icons.Rounded.FavoriteBorder,
+                color = Color(0xFF433E3F),
+                route = "FavoriteBorder"
+            ),
+            Item(
+                icon = Icons.Rounded.Settings,
+                color = Color(0xFF433E3F),
+                route = "Settings"
+            )
+        )
+    }
+    val indicatorWidth = (configuration.screenWidthDp/items.count())/2
+    val selectedIndex = remember{
+        mutableStateOf(0)
+    }
+    val indicatorOffset by animateIntOffsetAsState(targetValue = IntOffset(
+        items[selectedIndex.value].offset.x.toInt()+(items[selectedIndex.value].size.width/4)-(items.count()*2)-2,
+        15
+    ),
+        animationSpec = tween(400)
+    )
+    val infiniteTrasition = rememberInfiniteTransition()
+    val indicatorColor by animateColorAsState(
+        targetValue = items[selectedIndex.value].color,
+        animationSpec = tween(500)
+    )
+    val indicatorFlashingColor by infiniteTrasition.animateFloat(
+        initialValue = .7f,
+        targetValue = .6f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    val switching = remember {
+        mutableStateOf(false)
+    }
+    LaunchedEffect(switching.value) {
+        if (switching.value){
+            delay(250)
+            switching.value = false
+        }
+    }
+
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .shadow(8.dp, RoundedCornerShape(10.dp))
+        .clip(
+            RoundedCornerShape(0.dp)
+        )
+        .background(Color(0xFFC69C72))
+    ){
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical =20.dp),
+            verticalAlignment = Alignment.CenterVertically){
+            items.forEachIndexed { index, item ->
+                Box(modifier = Modifier.onGloballyPositioned {
+                    val offset = it.positionInParent()
+                    items[index] = items[index].copy(
+                        offset = offset,
+                        size = it.size
+                    )
+                }.weight((1.0/items.count()).toFloat())
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember {
+                            MutableInteractionSource()
+                        },
+                        onClick = {
+                            switching.value = true
+                            selectedIndex.value = index
+                            navController.navigate(item.route)
+                        }
+                    ), contentAlignment = Alignment.Center
+                ){
+                    Icon(
+                        imageVector = item.icon,
+                        contentDescription = null,
+                        tint = Color.Black
+                    )
+                }
+            }
+        }
+            Column(
+                modifier = Modifier.offset{
+                    indicatorOffset
+                },
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(modifier = Modifier.shadow(
+                        2.dp,
+                CircleShape,
+                ambientColor = indicatorColor,
+                spotColor = indicatorColor
+                )
+                .height(3.dp)
+                .width(indicatorWidth.dp)
+                .clip(CircleShape)
+                .background(indicatorColor))
+                AnimatedVisibility(visible = !switching.value, enter = expandVertically() + fadeIn(),
+                    exit = shrinkHorizontally() + fadeOut()
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(50.dp)
+                            .height(50.dp)
+                            .drawBehind {
+                                val path = Path()
+                                path.moveTo(100f, 0f)
+                                path.lineTo(38f, 0f)
+                                path.lineTo(-3f, 135f)
+                                path.lineTo(135f, 135f)
+                                path.close()
+                                drawPath(
+                                    path = path,
+                                    brush = Brush.verticalGradient(
+                                        listOf(
+                                            indicatorColor.copy(
+                                                alpha = indicatorFlashingColor - .2f
+                                            ),
+                                            indicatorColor.copy(
+                                                alpha = indicatorFlashingColor-.4f
+                                            ),
+                                            Color.Transparent
+                                        )
+                                    ),
+                                )
+                            }
+                    )
+                }
+            }
+    }
+}
+data class Item (
+    val icon:ImageVector,
+    val color:Color,
+    val offset:Offset = Offset(0f,0f),
+    val size:IntSize = IntSize(0,0),
+    val route: String
+)
 
 
 @Composable
@@ -360,6 +568,7 @@ fun Stories() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
-fun PreviewHome(){
-    HomeScreen()
+fun PreviewHome() {
+    val fakeNavController = rememberNavController()
+    HomeScreen(navController = fakeNavController)
 }

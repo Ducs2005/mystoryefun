@@ -26,8 +26,10 @@ class MainActivity : ComponentActivity() {
 fun AppNavHost(navController: NavHostController) {
     NavHost(navController, startDestination = "home") {
         composable("login") { LoginScreen(navController) }
+
+        composable("home") { HomeScreen(navController) }
         composable("profile") { ProfileScreen(navController) }
-        composable("home") { HomeScreen() }
+        composable("home") { HomeScreen(navController) }
         composable("upload") { UploadScreen(navController) }
         composable("register") { RegisterScreen(navController) }
         composable("mystory") { MyStoryScreen(navController) }
@@ -35,7 +37,11 @@ fun AppNavHost(navController: NavHostController) {
         composable("bookDetail") { BookDetailScreen() }
         composable("read") { ReaderScreen() }
 
-
+        composable("Home") { HomeScreen(navController) }
+        composable("AccountBox") { BookDetailScreen() }
+        composable("AddCircle") { HomeScreen(navController) }
+        composable("FavoriteBorder") { FavoriteScreen() }
+        composable("Settings") { ReaderScreen() }
     }
 }
 
