@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.storyefun.R
+import com.example.storyefun.navigation.nav
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,7 +37,7 @@ fun Header(
     active: Boolean,
     onQueryChange: (String) -> Unit,
     onActiveChange: (Boolean) -> Unit,
-    navController: NavController,
+    navController: NavController
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         // Header 1
@@ -49,36 +50,32 @@ fun Header(
             Column(modifier = Modifier.padding(8.dp)) {
                 Text(
                     text = "ストリエフン",
-                    fontSize = 25.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
                     text = "STORYEFUN",
+                    fontSize = 13.sp,
                     color = Color.DarkGray,
-                    modifier = Modifier.clickable {  navController.navigate("Home")
-                    }
+                    modifier = Modifier.padding(start=8.dp)
                 )
             }
             // Right
             Row(modifier = Modifier.padding(5.dp)) {
-                IconButton(onClick = { navController.navigate("profile")}) { Icon(Icons.Default.Person, contentDescription = "person") }
-                IconButton(onClick = {navController.navigate("setting")}) { Icon(Icons.Default.Settings, contentDescription = "settings") }
-                //IconButton(onClick = {}) { Icon(Icons.Default.MoreVert, contentDescription = "morevert") }
+                IconButton(onClick = {navController.navigate("profile")}) { Icon(Icons.Default.Person, contentDescription = "person") }
+                IconButton(onClick = {navController.navigate("setting")}) { Icon(Icons.Default.Settings, contentDescription = "settingss") }
             }
         }
 
         Divider(modifier = Modifier.padding(horizontal = 20.dp))
 
-        // Header 2
+        /* unnessesary part
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-
-
-                /* Delete this unnecessary line
             IconButton(onClick = {}) {
                 Icon(
                     painter = painterResource(id = R.drawable.menu),
@@ -89,28 +86,27 @@ fun Header(
             }
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.padding(top = 15.dp)) {
-                n
                 Text(
                     text = "Hi, Thanh Phuong!",
-                    fontSize = 25.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     modifier = Modifier.padding(top = 4.dp),
                     text = "Welcome back to Storyefun",
-                    fontSize = 15.sp,
+                    fontSize = 13.sp,
                     color = Color.Gray
                 )
-              }
-                 */
-
+            }
         }
+
+         */
 
         // SearchBar
         SearchBar(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp),
+                .padding(8.dp),
             query = text,
             onQueryChange = onQueryChange,
             onSearch = { onActiveChange(false) },

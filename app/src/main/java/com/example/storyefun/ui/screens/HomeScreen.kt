@@ -65,8 +65,7 @@ fun HomeScreen(navController :NavController) {
 
     Scaffold(
         topBar = { Header(text, active, onQueryChange = { text = it }, onActiveChange = { active = it }, navController) },
-        bottomBar = { }
-    ) { paddingValues ->
+        bottomBar = { BottomBar(navController) }    ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize()) {
             // Background image
             Image(
