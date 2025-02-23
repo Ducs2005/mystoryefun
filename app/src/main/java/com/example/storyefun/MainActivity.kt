@@ -8,7 +8,9 @@ import androidx.compose.runtime.Composable
 
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
+import com.example.storyefun.ui.AppNavigation
 import com.example.storyefun.ui.screens.*
+
 
 
 
@@ -17,24 +19,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
-            AppNavHost(navController)
+            AppNavigation(navController)
         }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AppNavHost(navController: NavHostController) {
-    NavHost(navController, startDestination = "home") {
-        composable("login") { LoginScreen(navController) }
-        composable("home") { HomeScreen() }
-        composable("register") { RegisterScreen(navController) }
-
-
-        composable("bookDetail") { BookDetailScreen() }
-        composable("read") { ReaderScreen() }
-
-
     }
 }
 

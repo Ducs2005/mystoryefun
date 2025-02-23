@@ -3,6 +3,7 @@ package com.example.storyefun.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -24,15 +25,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.storyefun.R
 import com.example.storyefun.ui.components.*
 
 @Composable
-fun BookDetailScreen() {
+fun BookDetailScreen(navController: NavController) {
     var searchQuery by remember { mutableStateOf("") }
     var selectedTabIndex by remember { mutableStateOf(0) }
 
@@ -42,58 +48,56 @@ fun BookDetailScreen() {
     ) {
         // Background Image
         Image(
-            painter = painterResource(id = R.drawable.background3), // Replace with your background image
+            painter = painterResource(id = R.drawable.background),
             contentDescription = "Background",
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .fillMaxSize()
                 .matchParentSize()
-
-
-
+                .graphicsLayer(alpha = 0.5f)
         )
 
-        // Foreground Content
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
+        // Use LazyColumn as the main scrollable container
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            SearchBar(searchQuery, onQueryChange = { searchQuery = it })
+            item {
+                var text by remember { mutableStateOf("") }
+                var active by remember { mutableStateOf(false) }
+                Header(text, active, onQueryChange = { text = it }, onActiveChange = { active = it }, navController)
+            }
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                MangaInfo()
-                Column(modifier = Modifier.fillMaxSize()) {
-                    // Tabs
-                    TabRow(
-                        selectedTabIndex = selectedTabIndex,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Tab(
-                            selected = selectedTabIndex == 0,
-                            onClick = { selectedTabIndex = 0 },
-                            text = { Text("Thông tin") }
-                        )
-                        Tab(
-                            selected = selectedTabIndex == 1,
-                            onClick = { selectedTabIndex = 1 },
-                            text = { Text("Chapter") }
-                        )
-                    }
+            item { MangaInfo() }
 
-                    // Content based on selected tab
-                    when (selectedTabIndex) {
-                        0 -> InformationSection()
-                        1 -> ChapterListSection()
-                    }
+            item {
+                TabRow(
+                    selectedTabIndex = selectedTabIndex,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Tab(
+                        selected = selectedTabIndex == 0,
+                        onClick = { selectedTabIndex = 0 },
+                        text = { Text("Thông tin") }
+                    )
+                    Tab(
+                        selected = selectedTabIndex == 1,
+                        onClick = { selectedTabIndex = 1 },
+                        text = { Text("Chapter") }
+                    )
+                }
+            }
+
+            item {
+                when (selectedTabIndex) {
+                    0 -> InformationSection(navController)
+                    1 -> ChapterListSection()
                 }
             }
         }
     }
 }
+
 
 
 @Composable
@@ -132,38 +136,46 @@ fun MangaInfo() {
 }
 
 @Composable
-fun ReadButton() {
+fun ReadButton(navController : NavController) {
     Button(
         onClick = { /* Start Reading */ },
         colors = ButtonDefaults.buttonColors(Color.Red),
         modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
     ) {
-        Text("Bắt đầu đọc", fontSize = 18.sp, color = Color.White)
+        Text("Bắt đầu đọc", fontSize = 18.sp, color = Color.White,
+                modifier = Modifier.clickable { navController.navigate("reader") }
+
+            )
+
     }
 }
-
 
 @Composable
 fun MangaDescription() {
     val genres = listOf("Action", "Horror", "Romance", "Manga", "Adventure", "Fantasy", "Drama", "Comedy")
 
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 90.dp), // Auto-fit based on width
-        modifier = Modifier.padding(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(1.dp),
-        verticalArrangement = Arrangement.spacedBy(2.dp)
-    ) {
-        items(genres.size) { index ->
-            GenreTag(genres[index])
+    Column(modifier = Modifier.padding(8.dp)) {
+        Box(modifier = Modifier.height(200.dp)) { // ✅ Fixed height to avoid infinite constraints
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 90.dp),
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(genres.size) { index ->
+                    GenreTag(genres[index])
+                }
+            }
         }
-    }
 
-    Text(
-        text = "Mô tả: Spirited Away follows Chihiro, a young girl trapped in a mystical world...",
-        fontSize = 14.sp,
-        modifier = Modifier.padding(top = 8.dp)
-    )
+        Text(
+            text = "Mô tả: Spirited Away follows Chihiro, a young girl trapped in a mystical world...",
+            fontSize = 14.sp,
+            modifier = Modifier.padding(top = 8.dp)
+        )
+    }
 }
+
 
 
 @Composable
@@ -179,10 +191,10 @@ fun GenreTag(text: String) {
 }
 
 @Composable
-fun InformationSection()
+fun InformationSection(navController: NavController)
 {
     MangaDescription()
-    ReadButton()
+    ReadButton(navController)
     CommentSection()
 }
 
@@ -226,5 +238,6 @@ fun ChapterListSection() {
 @Preview(showBackground = true)
 @Composable
 fun MangaDetailScreenPreview() {
-    BookDetailScreen()
+    // stop preview when add parameter to class
+   // BookDetailScreen()
 }

@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,16 +24,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 
 @Composable
-fun ReaderScreen(isManga: Boolean = false) {
+fun ReaderScreen(navController: NavController) {
     var isUIVisible by remember { mutableStateOf(true) } // Controls visibility of header/footer
-
+    val isManga = false
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .clickable { isUIVisible = !isUIVisible } // Toggle UI visibility on click
+            .clickable(
+                onClick = { isUIVisible = !isUIVisible },
+                indication = null, //  Remove default ripple effect
+                interactionSource = remember { MutableInteractionSource() } // Prevents pressed state effect
+            )
     ) {
         Column {
             CustomTopBar(isUIVisible, onBack = { /* Handle Back */ })
@@ -54,7 +60,7 @@ fun NovelContent() {
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(16.dp)
     ) {
-        items(8) { // Sample paragraphs
+        items(100) { // Sample paragraphs
             Text(
                 text = "Đây là truyện chữ là truyện chữ là truyện chữ...",
                 fontSize = 16.sp,
@@ -137,5 +143,5 @@ fun CustomTopBar(isVisible: Boolean, onBack: () -> Unit) {
 @Preview
 @Composable
 fun PreviewReaderScreen() {
-    ReaderScreen(isManga = false) // Toggle between true (Manga) and false (Novel)
+    //ReaderScreen(isManga = false) // Toggle between true (Manga) and false (Novel)
 }
