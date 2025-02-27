@@ -25,7 +25,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -69,7 +69,6 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.50")
     kapt("com.google.dagger:hilt-compiler:2.50")
 
-
     // Firebase for Authentication & Storage
     implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
     implementation("com.google.firebase:firebase-auth-ktx")
@@ -78,11 +77,8 @@ dependencies {
     // Coil for Image Loading
     implementation("io.coil-kt:coil-compose:2.6.0")
 
-    implementation(platform("com.google.firebase:firebase-bom:33.9.0"))
     implementation("com.google.firebase:firebase-analytics")
 
-    //Coil for gif
-    implementation ("androidx.core:core-splashscreen:1.0.1")
-
+    // Coil for gif
+    implementation("androidx.core:core-splashscreen:1.0.1")
 }
-
