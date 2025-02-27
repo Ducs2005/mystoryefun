@@ -51,19 +51,21 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.storyefun.R
+import com.example.storyefun.navigation.nav
+import com.example.storyefun.ui.components.*
 import com.google.firebase.auth.FirebaseAuth
 
 @ExperimentalMaterial3Api
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController :NavController) {
     var text by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
 
+
     Scaffold(
-        topBar = { Header(text, active, onQueryChange = { text = it }, onActiveChange = { active = it }) },
-        bottomBar = { }
-    ) { paddingValues ->
+        topBar = { Header(text, active, onQueryChange = { text = it }, onActiveChange = { active = it }, navController) },
+        bottomBar = { BottomBar(navController) }    ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize()) {
             // Background image
             Image(
@@ -84,116 +86,12 @@ fun HomeScreen() {
             ) {
                 item { Banner() }
                 item { ContinueRead() }
-                item { ContinueRead() }
-                item { ContinueRead() }
-                item { ContinueRead() }
-                item { ContinueRead() }
-                item { Stories() }
+
+                item { Stories(navController) }
             }
         }
     }
 }
-
-@Composable
-fun Header(
-    text: String,
-    active: Boolean,
-    onQueryChange: (String) -> Unit,
-    onActiveChange: (Boolean) -> Unit
-) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        // Header 1
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            // Left
-            Column(modifier = Modifier.padding(8.dp)) {
-                Text(
-                    text = "ストリエフン",
-                    fontSize = 25.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-                Text(
-                    text = "STORYEFUN",
-                    color = Color.DarkGray
-                )
-            }
-            // Right
-            Row(modifier = Modifier.padding(5.dp)) {
-                IconButton(onClick = {}) { Icon(Icons.Default.Person, contentDescription = "person") }
-                IconButton(onClick = {}) { Icon(Icons.Default.Notifications, contentDescription = "notifications") }
-                IconButton(onClick = {}) { Icon(Icons.Default.MoreVert, contentDescription = "morevert") }
-            }
-        }
-
-        Divider(modifier = Modifier.padding(horizontal = 20.dp))
-
-        // Header 2
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = {}) {
-                Icon(
-                    painter = painterResource(id = R.drawable.menu),
-                    contentDescription = null,
-                    tint = Color.Gray,
-                    modifier = Modifier.size(50.dp)
-                )
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(modifier = Modifier.padding(top = 15.dp)) {
-                Text(
-                    text = "Hi, Thanh Phuong!",
-                    fontSize = 25.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    modifier = Modifier.padding(top = 4.dp),
-                    text = "Welcome back to Storyefun",
-                    fontSize = 15.sp,
-                    color = Color.Gray
-                )
-            }
-        }
-
-        // SearchBar
-        SearchBar(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp),
-            query = text,
-            onQueryChange = onQueryChange,
-            onSearch = { onActiveChange(false) },
-            active = active,
-            onActiveChange = onActiveChange,
-            placeholder = { Text(text = "Search here...") },
-            leadingIcon = { Icon(imageVector = Icons.Default.Search, contentDescription = "Search icon") },
-            shape = RoundedCornerShape(4.dp),
-            colors = SearchBarDefaults.colors(containerColor = Color.White),
-            trailingIcon = {
-                if (active) {
-                    Icon(
-                        modifier = Modifier.clickable {
-                            if (text.isNotEmpty()) {
-                                onQueryChange("")
-                            } else {
-                                onActiveChange(false)
-                            }
-                        },
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Close icon"
-                    )
-                }
-            }
-        ) {}
-    }
-}
-
 
 @Composable
 fun Banner() {
@@ -281,7 +179,7 @@ fun ContinueRead() {
 }
 
 @Composable
-fun Stories() {
+fun Stories(navController: NavController) {
     val backgroundImages = listOf(
         R.drawable.banner2,
         R.drawable.banner3,
@@ -327,7 +225,9 @@ fun Stories() {
 
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { navController.navigate("bookDetail") }
         ) {
             itemsIndexed(backgroundImages) { index, backgroundImage ->
                 Box(
@@ -361,5 +261,6 @@ fun Stories() {
 @Preview(showBackground = true)
 @Composable
 fun PreviewHome(){
-    HomeScreen()
+    //stop preview to add navigation
+    // HomeScreen()
 }
