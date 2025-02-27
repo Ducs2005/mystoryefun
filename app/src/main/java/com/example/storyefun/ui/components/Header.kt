@@ -30,6 +30,8 @@ import androidx.navigation.NavController
 import com.example.storyefun.R
 import com.example.storyefun.navigation.nav
 
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Header(
@@ -51,7 +53,8 @@ fun Header(
                 Text(
                     text = "ストリエフン",
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold ,
+                    //modifier = Modifier.clickable({navController.navigate("home")})
                 )
                 Text(
                     text = "STORYEFUN",

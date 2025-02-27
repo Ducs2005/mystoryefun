@@ -1,5 +1,6 @@
 package com.example.storyefun.ui
 
+import UploadScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.*
@@ -7,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
+import com.example.profileui.ProfileScreen
 import com.example.storyefun.ui.screens.*
 import com.example.storyefun.ui.theme.ThemeViewModel
 

@@ -62,7 +62,6 @@ fun BookDetailScreen(navController: NavController) {
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            SearchBar(searchQuery, onQueryChange = { searchQuery = it })
             item {
                 var text by remember { mutableStateOf("") }
                 var active by remember { mutableStateOf(false) }
@@ -152,9 +151,9 @@ fun ReadButton(navController : NavController) {
         modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
     ) {
         Text("Bắt đầu đọc", fontSize = 18.sp, color = Color.White,
-                modifier = Modifier.clickable { navController.navigate("reader") }
+            modifier = Modifier.clickable { navController.navigate("reader") }
 
-            )
+        )
 
     }
 }
@@ -248,5 +247,5 @@ fun ChapterListSection() {
 @Composable
 fun MangaDetailScreenPreview() {
     // stop preview when add parameter to class
-   // BookDetailScreen()
+    // BookDetailScreen()
 }

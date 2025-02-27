@@ -5,6 +5,7 @@ import android.widget.Space
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -152,7 +153,7 @@ fun SettingItem(
             .padding(vertical = 8.dp)
             .clickable(
                 onClick = { onClick?.invoke() },
-                indication = rememberRipple(bounded = true), // Hiệu ứng sóng lan toả
+                indication = LocalIndication.current, // ✅ Ripple mới của Material 3
                 interactionSource = remember { MutableInteractionSource() }
             )
             .padding(12.dp), // Tăng padding cho dễ bấm
