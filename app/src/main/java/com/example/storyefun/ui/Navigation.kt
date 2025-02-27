@@ -22,6 +22,7 @@ sealed class Screen(val route: String) {
     object Profile : Screen("profile")
     object MyStory : Screen("mystory")
     object Setting : Screen("setting")
+    object Category : Screen("AccountBox")
 
 }
 
@@ -44,7 +45,7 @@ fun AppNavigation(navController: NavHostController, themeViewModel: ThemeViewMod
         composable(Screen.Upload.route) { UploadScreen(navController) }
         composable(Screen.MyStory.route) { MyStoryScreen(navController) }
         composable(Screen.Setting.route) { SettingScreen(navController, themeViewModel) }
-
+        composable(Screen.Category.route) { CategoryScreen(navController) }
 
 
     }
