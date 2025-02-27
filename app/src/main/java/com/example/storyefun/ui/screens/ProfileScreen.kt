@@ -1,9 +1,5 @@
 package com.example.profileui
 
-import android.os.Bundle
-import android.widget.Space
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
@@ -13,8 +9,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -25,26 +26,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.storyefun.R
-import com.example.storyefun.ui.screens.HomeScreen
-
-
+import com.example.storyefun.ui.theme.ThemeViewModel
 
 @Composable
-fun ProfileScreen(navController: NavController) {
+fun ProfileScreen(navController: NavController, themeViewModel: ThemeViewModel) {
+    // Use shared dark mode state from ThemeViewModel
+    val isDarkMode by themeViewModel.isDarkTheme.collectAsState()
+    val backgroundColor = if (isDarkMode) Color.Black else Color.White
+    val textColor = if (isDarkMode) Color.White else Color.Black
 
-    var darkMode by remember { mutableStateOf(false) }
-    val backgroundColor = if (darkMode) Color.Black else Color.White // Chế độ tối = đen
-    val textColor = if (darkMode) Color.White else Color.Black // Chữ trắng khi dark mode
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(if (darkMode) Color.Black else Color.White)
+            .background(backgroundColor)
             .padding(16.dp)
     ) {
         // Avatar + Name + Location
@@ -53,14 +51,19 @@ fun ProfileScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Settings Section
-        SettingsSection(navController,darkMode, textColor, { darkMode = it }) { destination ->
-            // Xử lý điều hướng dựa vào destination
+        SettingsSection(
+            navController = navController,
+            darkMode = isDarkMode,
+            textColor = textColor,
+            onDarkModeToggle = { themeViewModel.toggleTheme() }
+        ) { destination ->
+            // Handle navigation based on destination
             when (destination) {
-                "home" -> navController.navigate("login") // Điều hướng tới Home
-                "favourite" -> navController.navigate("login") // Điều hướng tới trang yêu thích
-                "account" -> navController.navigate("login") // Điều hướng tới tài khoản
-                "contact" -> navController.navigate("login") // Điều hướng tới liên hệ
-                "out" -> println("Đăng xuất") // Xử lý đăng xuất
+                "home" -> navController.navigate("login")
+                "favourite" -> navController.navigate("login")
+                "account" -> navController.navigate("login")
+                "contact" -> navController.navigate("login")
+                "out" -> println("Đăng xuất")
             }
         }
     }
@@ -70,13 +73,11 @@ fun ProfileScreen(navController: NavController) {
 fun ProfileHeader(textColor: Color) {
     Box(
         modifier = Modifier
-            .fillMaxWidth() // Chiếm toàn bộ chiều rộng
-            .padding(vertical = 32.dp), // Tạo khoảng cách phía trên và dưới
-        contentAlignment = Alignment.Center // Căn giữa nội dung trong Box
+            .fillMaxWidth()
+            .padding(vertical = 32.dp),
+        contentAlignment = Alignment.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
                 painter = painterResource(id = R.drawable.ava),
                 contentDescription = "Profile Picture",
@@ -85,7 +86,12 @@ fun ProfileHeader(textColor: Color) {
                     .clip(CircleShape)
             )
             Spacer(modifier = Modifier.height(12.dp))
-            Text(text = "Hoàng Văn Sỹ", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = textColor)
+            Text(
+                text = "Hoàng Văn Sỹ",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = textColor
+            )
             Spacer(modifier = Modifier.height(15.dp))
             ProfileStats(textColor)
         }
@@ -99,24 +105,32 @@ fun ProfileStats(textColor: Color) {
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         StatItem("122", "followers", textColor)
-        StatItem("67", "following" , textColor)
+        StatItem("67", "following", textColor)
         StatItem("37K", "likes", textColor)
     }
 }
+
 @Composable
-fun StatItem(number: String, label: String,textColor: Color) {
+fun StatItem(number: String, label: String, textColor: Color) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = number, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color(0xFF2E2E5D))
+        Text(
+            text = number,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF2E2E5D)
+        )
         Text(text = label, fontSize = 14.sp, color = Color.Gray)
     }
 }
+
 @Composable
 fun SettingsSection(
     navController: NavController,
     darkMode: Boolean,
-                    textColor: Color,
-                    onDarkModeToggle: (Boolean) -> Unit,
-                    onItemClick: (String) -> Unit) {
+    textColor: Color,
+    onDarkModeToggle: (Boolean) -> Unit,
+    onItemClick: (String) -> Unit
+) {
     Column(modifier = Modifier.padding(16.dp)) {
         Text(
             text = "Settings",
@@ -125,15 +139,49 @@ fun SettingsSection(
             color = textColor
         )
         Spacer(modifier = Modifier.height(8.dp))
-        SettingItem("Chế độ tối", Icons.Default.Face, switch = true, darkMode, textColor, onDarkModeToggle)
-        SettingItem("tai khoan", Icons.Default.Person, darkMode = darkMode, textColor = textColor, onClick = {
-            navController.navigate("login")
-        })
-
-        SettingItem("truyen yêu thích", Icons.Default.Favorite, darkMode = darkMode, textColor = textColor){onItemClick("login")}
-        SettingItem("them truyen", Icons.Default.Add, darkMode = darkMode, textColor = textColor){onItemClick("login")}
-        SettingItem("Lien he", Icons.Default.Call, darkMode = darkMode, textColor = textColor){onItemClick("login")}
-        SettingItem("Dang xuat" , Icons.Default.ExitToApp, darkMode = darkMode, textColor = textColor){onItemClick("login")}
+        SettingItem(
+            title = "Chế độ tối",
+            icon = Icons.Default.Face,
+            switch = true,
+            darkMode = darkMode,
+            textColor = textColor,
+            onDarkModeToggle = { onDarkModeToggle(it) }
+        )
+        SettingItem(
+            title = "tai khoan",
+            icon = Icons.Default.Person,
+            darkMode = darkMode,
+            textColor = textColor,
+            onClick = { navController.navigate("login") }
+        )
+        SettingItem(
+            title = "truyen yêu thích",
+            icon = Icons.Default.Favorite,
+            darkMode = darkMode,
+            textColor = textColor,
+            onClick = { onItemClick("login") }
+        )
+        SettingItem(
+            title = "them truyen",
+            icon = Icons.Default.Add,
+            darkMode = darkMode,
+            textColor = textColor,
+            onClick = { onItemClick("login") }
+        )
+        SettingItem(
+            title = "Lien he",
+            icon = Icons.Default.Call,
+            darkMode = darkMode,
+            textColor = textColor,
+            onClick = { onItemClick("login") }
+        )
+        SettingItem(
+            title = "Dang xuat",
+            icon = Icons.Default.ExitToApp,
+            darkMode = darkMode,
+            textColor = textColor,
+            onClick = { onItemClick("login") }
+        )
     }
 }
 
@@ -145,7 +193,7 @@ fun SettingItem(
     darkMode: Boolean = false,
     textColor: Color,
     onDarkModeToggle: ((Boolean) -> Unit)? = null,
-    onClick: (() -> Unit)? = null // ✅ Thêm sự kiện click
+    onClick: (() -> Unit)? = null
 ) {
     Row(
         modifier = Modifier
@@ -153,10 +201,10 @@ fun SettingItem(
             .padding(vertical = 8.dp)
             .clickable(
                 onClick = { onClick?.invoke() },
-                indication = LocalIndication.current, // ✅ Ripple mới của Material 3
+                indication = LocalIndication.current,
                 interactionSource = remember { MutableInteractionSource() }
             )
-            .padding(12.dp), // Tăng padding cho dễ bấm
+            .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -184,6 +232,3 @@ fun SettingItem(
         }
     }
 }
-
-
-

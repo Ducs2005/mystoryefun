@@ -5,41 +5,24 @@ package com.example.storyefun.ui.screens
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
@@ -48,46 +31,66 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import com.example.storyefun.R
-import com.example.storyefun.navigation.nav
-import com.example.storyefun.ui.components.*
-import com.google.firebase.auth.FirebaseAuth
+import com.example.storyefun.ui.components.BottomBar
+import com.example.storyefun.ui.components.Header
+import com.example.storyefun.ui.theme.AppTheme
+import com.example.storyefun.ui.theme.LocalAppColors
+import com.example.storyefun.ui.theme.ThemeViewModel
 
 @ExperimentalMaterial3Api
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeScreen(navController :NavController) {
+fun HomeScreen(navController: NavController, themeViewModel: ThemeViewModel) {
     var text by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
+    val isDarkMode by themeViewModel.isDarkTheme.collectAsState()
 
+    AppTheme(darkTheme = isDarkMode) {
+        val colors = LocalAppColors.current
 
-    Scaffold(
-        topBar = { Header(text, active, onQueryChange = { text = it }, onActiveChange = { active = it }, navController) },
-        bottomBar = { BottomBar(navController) }    ) { paddingValues ->
-        Box(modifier = Modifier.fillMaxSize()) {
-            // Background image
-            Image(
-                painter = painterResource(R.drawable.background),
-                contentDescription = "background",
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier
-                    .matchParentSize()
-                    .graphicsLayer(alpha = 0.5f)
-            )
+        Scaffold(
+            topBar = {
+                Header(
+                    text = text,
+                    active = active,
+                    onQueryChange = { text = it },
+                    onActiveChange = { active = it },
+                    navController = navController,
+                )
+            },
+            bottomBar = { BottomBar(navController) }
+        ) { paddingValues ->
+            Box(modifier = Modifier.fillMaxSize()) {
+                // In light mode, use a background image; in dark mode, use theme background color
+                if (!isDarkMode) {
+                    Image(
+                        painter = painterResource(id = R.drawable.background),
+                        contentDescription = "background",
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier
+                            .matchParentSize()
+                            .graphicsLayer(alpha = 0.5f)
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .background(colors.backgroundColor)
+                    )
+                }
 
-            // Main content
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                item { Banner() }
-                item { ContinueRead() }
-
-                item { Stories(navController) }
+                // Main content
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    item { Banner() }
+                    item { ContinueRead() }
+                    item { Stories(navController) }
+                }
             }
         }
     }
@@ -96,8 +99,7 @@ fun HomeScreen(navController :NavController) {
 @Composable
 fun Banner() {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     ) {
         Image(
             painter = painterResource(id = R.drawable.bannerhome),
@@ -110,7 +112,7 @@ fun Banner() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(300.dp)
-                .background(Color.White.copy(alpha = 0.2f))
+                .background(androidx.compose.ui.graphics.Color.White.copy(alpha = 0.2f))
         )
         Image(
             painter = painterResource(id = R.drawable.poster1),
@@ -119,28 +121,32 @@ fun Banner() {
                 .align(Alignment.CenterStart)
                 .offset(x = 16.dp)
                 .height(250.dp)
-                .border(1.dp, Color.Gray, shape = RoundedCornerShape(10.dp))
+                .clip(RoundedCornerShape(10.dp))
         )
     }
 }
 
 @Composable
 fun ContinueRead() {
+    var theme = LocalAppColors.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
+
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = "Continue Reading",
                 style = TextStyle(
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp),
+                    fontSize = 20.sp,
+                    color = theme.textPrimary
+
+                )
             )
             Spacer(modifier = Modifier.weight(1f))
             IconButton(
@@ -151,9 +157,8 @@ fun ContinueRead() {
             ) {
                 Text(
                     text = "Xem tất cả",
-                    style = TextStyle(
-                        fontStyle = FontStyle.Italic,
-                    )
+                    style = TextStyle(fontStyle = FontStyle.Italic),
+                    color = theme.textSecondary
                 )
             }
         }
@@ -161,11 +166,8 @@ fun ContinueRead() {
             Image(
                 painter = painterResource(id = R.drawable.bannerhome),
                 contentDescription = "Banner",
-                modifier = Modifier
-                    .fillMaxWidth()
-//                    .offset(y = 16.dp)
+                modifier = Modifier.fillMaxWidth()
             )
-
             Image(
                 painter = painterResource(id = R.drawable.poster1),
                 contentDescription = "Overlay Image",
@@ -187,7 +189,6 @@ fun Stories(navController: NavController) {
         R.drawable.bannerhome,
         R.drawable.bannerhome
     )
-
     val overlayImages = listOf(
         R.drawable.poster2,
         R.drawable.poster3,
@@ -207,9 +208,7 @@ fun Stories(navController: NavController) {
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = "Truyện ngắn",
-            )
+            Text(text = "Truyện ngắn")
             Spacer(modifier = Modifier.weight(1f))
             IconButton(
                 onClick = {},
@@ -217,12 +216,10 @@ fun Stories(navController: NavController) {
                     .width(80.dp)
                     .align(Alignment.CenterVertically)
             ) {
-                Text(
-                    text = "Xem tất cả"
-                    )
+                Text(text = "Xem tất cả")
+
             }
         }
-
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
@@ -242,7 +239,6 @@ fun Stories(navController: NavController) {
                             .fillMaxSize()
                             .clip(RoundedCornerShape(8.dp))
                     )
-
                     Image(
                         painter = painterResource(id = overlayImages[index]),
                         contentDescription = "Overlay",
@@ -260,7 +256,7 @@ fun Stories(navController: NavController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
-fun PreviewHome(){
-    //stop preview to add navigation
-    // HomeScreen()
+fun PreviewHome() {
+    // For preview purposes, you can create a dummy ThemeViewModel and NavController if needed.
+    // HomeScreen(navController = rememberNavController(), themeViewModel = DummyThemeViewModel())
 }

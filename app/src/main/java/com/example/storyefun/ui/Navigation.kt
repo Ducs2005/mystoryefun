@@ -35,12 +35,12 @@ fun AppNavigation(navController: NavHostController, themeViewModel: ThemeViewMod
         navController = navController,
         startDestination = Screen.Home.route
     ) {
-        composable(Screen.Home.route) { HomeScreen(navController) }
+        composable(Screen.Home.route) { HomeScreen(navController, themeViewModel) }
         composable(Screen.BookDetail.route) {BookDetailScreen(navController)}
         composable(Screen.Login.route) { LoginScreen(navController) }
         composable(Screen.Register.route) { RegisterScreen(navController) }
         composable(Screen.Reader.route) { ReaderScreen(navController) }
-        composable(Screen.Profile.route) { ProfileScreen(navController) }
+        composable(Screen.Profile.route) { ProfileScreen(navController, themeViewModel) }
         composable(Screen.Upload.route) { UploadScreen(navController) }
         composable(Screen.MyStory.route) { MyStoryScreen(navController) }
         composable(Screen.Setting.route) { SettingScreen(navController, themeViewModel) }

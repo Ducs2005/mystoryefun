@@ -29,7 +29,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.storyefun.R
 import com.example.storyefun.navigation.nav
-
+import com.example.storyefun.ui.theme.LocalAppColors
+import com.example.storyefun.ui.theme.ThemeViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,9 +40,10 @@ fun Header(
     active: Boolean,
     onQueryChange: (String) -> Unit,
     onActiveChange: (Boolean) -> Unit,
-    navController: NavController
+    navController: NavController,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
+        var theme = LocalAppColors.current
         // Header 1
         Row(
             modifier = Modifier
@@ -54,12 +56,13 @@ fun Header(
                     text = "ストリエフン",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold ,
+                    color = theme.textPrimary
                     //modifier = Modifier.clickable({navController.navigate("home")})
                 )
                 Text(
                     text = "STORYEFUN",
                     fontSize = 13.sp,
-                    color = Color.DarkGray,
+                    color = theme.textSecondary,
                     modifier = Modifier.padding(start=8.dp)
                 )
             }

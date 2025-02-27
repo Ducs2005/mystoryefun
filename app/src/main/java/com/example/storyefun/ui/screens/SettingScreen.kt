@@ -21,12 +21,12 @@ import com.example.storyefun.ui.theme.LocalAppColors
 import com.example.storyefun.ui.theme.ThemeViewModel
 @Composable
 fun SettingScreen(navController: NavController? = null, themeViewModel: ThemeViewModel) {
-    val colors = LocalAppColors.current
+    val theme = LocalAppColors.current
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(colors.backgroundColor) // Set background from theme
+            .background(theme.backgroundColor) // Set background from theme
     ) {
         Column(
             modifier = Modifier
@@ -46,7 +46,7 @@ fun SettingScreen(navController: NavController? = null, themeViewModel: ThemeVie
                         Icon(
                             Icons.Default.ArrowBack,
                             contentDescription = "Back",
-                            tint = colors.textPrimary
+                            tint = theme.textPrimary
                         )
                     }
                 }
@@ -58,9 +58,9 @@ fun SettingScreen(navController: NavController? = null, themeViewModel: ThemeVie
                     text = "Cài đặt",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = colors.textPrimary,
+                    color = theme.textPrimary,
                     modifier = Modifier
-                        .background(colors.backgroundColor) // Apply theme background
+                        .background(theme.backgroundColor) // Apply theme background
                         .padding(8.dp)
                 )
             }
@@ -79,17 +79,17 @@ fun SettingScreen(navController: NavController? = null, themeViewModel: ThemeVie
 
             Column {
                 settingsItems.forEach { title ->
-                    SettingsItem(title = title, textColor = colors.textPrimary, onClick = { /* Handle click */ })
+                    SettingsItem(title = title, textColor = theme.textPrimary, onClick = { /* Handle click */ })
                 }
 
                 // 🔹 Dark Mode Toggle
-                DarkModeToggle(themeViewModel, colors.textPrimary)
+                DarkModeToggle(themeViewModel, theme.textPrimary)
 
                 // 🔹 Language Setting
                 SettingsItem(
                     title = "Đa ngôn ngữ",
                     subtitle = "Tiếng Việt",
-                    textColor = colors.textPrimary,
+                    textColor = theme.textPrimary,
                     onClick = { /* Handle language change */ }
                 )
             }
@@ -101,7 +101,7 @@ fun SettingScreen(navController: NavController? = null, themeViewModel: ThemeVie
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { /* Handle logout */ }
-                    .background(colors.backgroundColor) // Apply same background as items
+                    .background(theme.backgroundColor) // Apply same background as items
                     .padding(16.dp),
                 contentAlignment = Alignment.Center
             ) {
@@ -109,7 +109,7 @@ fun SettingScreen(navController: NavController? = null, themeViewModel: ThemeVie
                     text = "Thoát đăng nhập",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
-                    color = colors.textPrimary,
+                    color = theme.textPrimary,
                     textAlign = TextAlign.Center
                 )
             }
