@@ -41,7 +41,7 @@ fun BottomBar(navController: NavController) {
             Item(
                 icon = Icons.Rounded.Home,
                 color = Color(0xFF433E3F),
-                route = "Home"
+                route = "home"
             ),
             Item(
                 icon = Icons.Rounded.AccountBox,
