@@ -56,20 +56,33 @@ fun Header(
                     text = "ストリエフン",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold ,
-                    color = theme.textPrimary
-                    //modifier = Modifier.clickable({navController.navigate("home")})
+                    color = theme.textPrimary,
+                    modifier = Modifier.clickable {navController.navigate("home")}
                 )
                 Text(
                     text = "STORYEFUN",
                     fontSize = 13.sp,
                     color = theme.textSecondary,
                     modifier = Modifier.padding(start=8.dp)
+                        .clickable { navController.navigate("home") }
                 )
             }
             // Right
             Row(modifier = Modifier.padding(5.dp)) {
-                IconButton(onClick = {navController.navigate("profile")}) { Icon(Icons.Default.Person, contentDescription = "person") }
-                IconButton(onClick = {navController.navigate("setting")}) { Icon(Icons.Default.Settings, contentDescription = "settingss") }
+                IconButton(onClick = { navController.navigate("profile") }) {
+                    Icon(
+                        Icons.Default.Person,
+                        contentDescription = "person",
+                        tint = theme.textPrimary // Icon color based on theme
+                    )
+                }
+                IconButton(onClick = { navController.navigate("setting") }) {
+                    Icon(
+                        Icons.Default.Settings,
+                        contentDescription = "settings",
+                        tint = theme.textPrimary // Icon color based on theme
+                    )
+                }
             }
         }
 

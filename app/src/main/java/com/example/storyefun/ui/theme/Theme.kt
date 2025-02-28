@@ -17,7 +17,11 @@ data class AppColors(
     val textSecondary: Color,
     val buttonBackground: Color,
     val buttonText: Color,
-    val backgroundColor : Color
+    val backgroundColor : Color,
+    val tagColor : Color,
+    val backgroundContrast1 : Color,
+    val backgroundContrast2 : Color
+
 )
 
 // Light Theme
@@ -27,7 +31,12 @@ val LightColors = AppColors(
     textSecondary = Color.Gray,
     buttonBackground = Color.Red,
     buttonText = Color.White,
-    backgroundColor = Color.White
+    backgroundColor = Color.White,
+    tagColor = Color.DarkGray,
+    backgroundContrast1 = Color.Black,
+    backgroundContrast2 = Color.DarkGray
+
+
 )
 
 // Dark Theme
@@ -37,7 +46,10 @@ val DarkColors = AppColors(
     textSecondary = Color.Gray,
     buttonBackground = Color.Red,
     buttonText = Color.Black,
-    backgroundColor = Color.Black
+    backgroundColor = Color.Black,
+    tagColor = Color.Gray,
+    backgroundContrast1 = Color.White,
+    backgroundContrast2 = Color.Gray
 )
 
 // Create a Local variable to store colors

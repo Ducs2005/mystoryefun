@@ -1,6 +1,7 @@
 package com.example.storyefun.ui.screens
 
 
+import android.content.res.Resources.Theme
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,31 +32,44 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.storyefun.R
 import com.example.storyefun.ui.components.*
+import com.example.storyefun.ui.theme.AppColors
+import com.example.storyefun.ui.theme.LocalAppColors
+import com.example.storyefun.ui.theme.ThemeViewModel
 
 @Composable
-fun BookDetailScreen(navController: NavController) {
+fun BookDetailScreen(navController: NavController, themeViewModel: ThemeViewModel) {
+    var theme = LocalAppColors.current
     var searchQuery by remember { mutableStateOf("") }
     var selectedTabIndex by remember { mutableStateOf(0) }
+    val isDarkMode by themeViewModel.isDarkTheme.collectAsState()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
     ) {
         // Background Image
-        Image(
-            painter = painterResource(id = R.drawable.background),
-            contentDescription = "Background",
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier
-                .fillMaxSize()
-                .matchParentSize()
-                .graphicsLayer(alpha = 0.5f)
-        )
+        if (!isDarkMode) {
+            Image(
+                painter = painterResource(id = R.drawable.background),
+                contentDescription = "background",
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier
+                    .matchParentSize()
+                    .graphicsLayer(alpha = 0.5f)
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(theme.backgroundColor)
+            )
+        }
 
         // Use LazyColumn as the main scrollable container
         LazyColumn(
@@ -68,30 +82,33 @@ fun BookDetailScreen(navController: NavController) {
                 Header(text, active, onQueryChange = { text = it }, onActiveChange = { active = it }, navController)
             }
 
-            item { MangaInfo() }
+            item { MangaInfo(theme) }
 
             item {
                 TabRow(
                     selectedTabIndex = selectedTabIndex,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    containerColor = theme.backgroundContrast2
+
                 ) {
                     Tab(
                         selected = selectedTabIndex == 0,
                         onClick = { selectedTabIndex = 0 },
-                        text = { Text("Thông tin") }
+                        text = { Text("Thông tin", color = theme.backgroundColor)
+                        }
                     )
                     Tab(
                         selected = selectedTabIndex == 1,
                         onClick = { selectedTabIndex = 1 },
-                        text = { Text("Chapter") }
+                        text = { Text("Chapter",  color = theme.backgroundColor) }
                     )
                 }
             }
 
             item {
                 when (selectedTabIndex) {
-                    0 -> InformationSection(navController)
-                    1 -> ChapterListSection()
+                    0 -> InformationSection(navController, theme)
+                    1 -> ChapterListSection(theme)
                 }
             }
         }
@@ -101,7 +118,7 @@ fun BookDetailScreen(navController: NavController) {
 
 
 @Composable
-fun MangaInfo() {
+fun MangaInfo(theme: AppColors) {
     Row {
         Box(modifier = Modifier.fillMaxWidth()
             .padding(bottom = 15.dp)
@@ -126,16 +143,16 @@ fun MangaInfo() {
         }
     }
 
-    Text(text = "Spirited Away", fontSize = 24.sp, color = Color.Black)
-    Text(text = "Hayao Miyazaki", fontSize = 16.sp, color = Color.Gray)
+    Text(text = "Spirited Away", fontSize = 24.sp, color = theme.textPrimary)
+    Text(text = "Hayao Miyazaki", fontSize = 16.sp, color = theme.textSecondary)
 
     // Stats Row
     Row(modifier = Modifier.padding(top = 8.dp)) {
-        Text("👁️ 23.4K  |  📅 2004  |  ❤️ 300.7K", fontSize = 14.sp, color = Color.Gray)
+        Text("👁️ 23.4K  |  📅 2004  |  ❤️ 300.7K", fontSize = 14.sp, color = theme.textSecondary)
     }
 
     Divider(
-        color = Color.Gray,  // Line color
+        color = theme.textSecondary,  // Line color
         thickness = 1.dp,    // Line thickness
         modifier = Modifier.padding(vertical = 8.dp)
     )
@@ -145,12 +162,13 @@ fun MangaInfo() {
 
 @Composable
 fun ReadButton(navController : NavController) {
+    var theme = LocalAppColors.current
     Button(
         onClick = { /* Start Reading */ },
         colors = ButtonDefaults.buttonColors(Color.Red),
         modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
     ) {
-        Text("Bắt đầu đọc", fontSize = 18.sp, color = Color.White,
+        Text("Bắt đầu đọc", fontSize = 18.sp, color = theme.textPrimary,
             modifier = Modifier.clickable { navController.navigate("reader") }
 
         )
@@ -159,7 +177,8 @@ fun ReadButton(navController : NavController) {
 }
 
 @Composable
-fun MangaDescription() {
+fun MangaDescription(theme: AppColors) {
+
     val genres = listOf("Action", "Horror", "Romance", "Manga", "Adventure", "Fantasy", "Drama", "Comedy")
 
     Column(modifier = Modifier.padding(8.dp)) {
@@ -171,7 +190,7 @@ fun MangaDescription() {
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(genres.size) { index ->
-                    GenreTag(genres[index])
+                    GenreTag(genres[index], theme)
                 }
             }
         }
@@ -179,7 +198,8 @@ fun MangaDescription() {
         Text(
             text = "Mô tả: Spirited Away follows Chihiro, a young girl trapped in a mystical world...",
             fontSize = 14.sp,
-            modifier = Modifier.padding(top = 8.dp)
+            modifier = Modifier.padding(top = 8.dp),
+            color = theme.textPrimary
         )
     }
 }
@@ -187,39 +207,46 @@ fun MangaDescription() {
 
 
 @Composable
-fun GenreTag(text: String) {
+fun GenreTag(text: String, theme: AppColors) {
     Text(
         text = text,
+        maxLines = 1, // Ensure text stays on one line
+        overflow = TextOverflow.Clip, // Clip text if it overflows (or use Ellipsis if desired)
+        softWrap = false, // Prevent wrapping in the middle of a word
         modifier = Modifier
+            .wrapContentWidth() // Let the width wrap content
             .padding(4.dp)
             .background(Color.Gray, RoundedCornerShape(8.dp))
             .padding(8.dp),
-        color = Color.White
+        color = theme.backgroundColor
     )
 }
 
+
+
 @Composable
-fun InformationSection(navController: NavController)
+fun InformationSection(navController: NavController, theme: AppColors)
 {
-    MangaDescription()
+    MangaDescription(theme)
     ReadButton(navController)
-    CommentSection()
+    CommentSection(theme)
 }
 
 @Composable
-fun ChapterListSection() {
+fun ChapterListSection(theme: AppColors) {
     Column(modifier = Modifier.padding(16.dp)) {
         Text(
             text = "Chapter (90)",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 4.dp) // Space below the title
+            modifier = Modifier.padding(bottom = 4.dp),
+            color = theme.textPrimary
         )
         Text(
             text = "Cập nhật mới nhất 29/02/2024",
             fontSize = 14.sp,
-            color = Color.Gray,
-            modifier = Modifier.padding(bottom = 12.dp) // Space below the update info
+            color = theme.textSecondary,
+            modifier = Modifier.padding(bottom = 12.dp), // Space below the update info
         )
 
         // Sample chapters
@@ -228,13 +255,16 @@ fun ChapterListSection() {
                 text = "Tập $i: ABC xyz",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(top = 12.dp, bottom = 4.dp) // Spacing between volume titles
+
+                modifier = Modifier.padding(top = 12.dp, bottom = 4.dp) ,
+                color = theme.textPrimary
+
             )
             for (j in 1..3) {
                 Text(
                     text = "Chương $j: Mở đầu 2 tên chương dài...  11/10/2024",
                     fontSize = 14.sp,
-                    color = Color.Gray,
+                    color = theme.textSecondary,
                     modifier = Modifier.padding(start = 16.dp, bottom = 6.dp) // Indent and space chapters
                 )
             }
