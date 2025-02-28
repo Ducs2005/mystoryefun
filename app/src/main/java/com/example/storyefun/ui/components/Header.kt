@@ -75,39 +75,6 @@ fun Header(
 
         Divider(modifier = Modifier.padding(horizontal = 20.dp))
 
-        /* unnessesary part
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = {}) {
-                Icon(
-                    painter = painterResource(id = R.drawable.menu),
-                    contentDescription = null,
-                    tint = Color.Gray,
-                    modifier = Modifier.size(50.dp)
-                )
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(modifier = Modifier.padding(top = 15.dp)) {
-                Text(
-                    text = "Hi, Thanh Phuong!",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    modifier = Modifier.padding(top = 4.dp),
-                    text = "Welcome back to Storyefun",
-                    fontSize = 13.sp,
-                    color = Color.Gray
-                )
-            }
-        }
-
-         */
-
         // SearchBar
         SearchBar(
             modifier = Modifier
